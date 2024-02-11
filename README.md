@@ -1,2 +1,4 @@
 # syncrecorder
-a in-browser multi-track recorder, to record your voiceovers and podcasts.
+
+<!-- TODO(tl): add a gif screenshot. -->
+a in-browser recorder/daw to record your voiceovers and podcasts.
