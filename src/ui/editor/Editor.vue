@@ -58,7 +58,7 @@ const shallHideNewTrackButton = computed(() => {
             <div class="placeholder min-h-[200px]"></div>
         </div>
         <div>
-            <Timeline :size="{ height: timelineSize.height, width: timelineSize.width }"></Timeline>
+            <Timeline :height="timelineSize.height" :width="timelineSize.width"></Timeline>
             <EditorCanvas :size="{ height: editorSize.height, width: editorSize.width }"></EditorCanvas>
         </div>
     </div>

@@ -24,11 +24,13 @@ import { currentTimeKey, timeRangeKey } from '../inject';
 import { Timecode } from '../timecode';
 import { useEventListener } from '@vueuse/core';
 
+import About from './dialogs/About.vue';
+
 import { useStatusBar } from '../use/useStatusBar';
+import DataViewer from './dialogs/DataViewer.vue';
 
-const statusBarMessage = ref("Ready");
-provide("statusBarMessage", statusBarMessage);
-
+const aboutOpened = ref(false);
+const dataViewerOpened = ref(false);
 
 const menuItems: Ref<MenuBar> = ref([
   {
@@ -58,7 +60,22 @@ const menuItems: Ref<MenuBar> = ref([
   },
   { label: "Edit", items: [{ label: "Undo", onClick: () => console.log("Undo") }] },
   { label: "View", items: [{ label: "Toggle Fullscreen", onClick: toggleFullscreen }] },
-  { label: "Help", items: [{ label: "About", onClick: () => console.log("About") }] }
+  {
+    label: "Help", items: [{
+      label: "About", onClick: () => {
+        aboutOpened.value = true;
+      }
+    }]
+  },
+  {
+    label: "Developer", items: [
+      {
+        label: "Show Document Status", onClick: () => {
+          dataViewerOpened.value = true;
+        }
+      },
+    ]
+  }
 ]);
 
 const baseTimeRange = ref({ leftmost: new Timecode(0, 0, 1, 15), step: 10 });
@@ -77,6 +94,20 @@ onMounted(() => {
   })
 })
 
+onMounted(() => {
+  useEventListener(window, 'keydown', (e) => {
+    if (e.key === 'Escape') {
+      aboutOpened.value = false;
+      dataViewerOpened.value = false;
+    }
+  })
+})
+
+onMounted(() => {
+    dataViewerOpened.value = true;
+})
+
+
 </script>
 
 <template>
@@ -84,8 +115,9 @@ onMounted(() => {
     <div class="sticky w-full top-0 left-0">
       <TitlebarStyleWindows :menus="menuItems"></TitlebarStyleWindows>
       <Toolbar></Toolbar>
-    </div>
-    <Editor></Editor>
-    <StatusBar></StatusBar>
   </div>
-</template>
+  <Editor></Editor>
+  <StatusBar></StatusBar>
+  <About :opened="aboutOpened" :onShallClose="() => {aboutOpened = false}"></About>
+  <DataViewer :opened="dataViewerOpened" :onShallClose="() => {dataViewerOpened = false}"></DataViewer>
+</div></template>
