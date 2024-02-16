@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { computed, reactive, ref, type Ref } from 'vue';
 import EditorCanvas from './EditorCanvas.vue';
-import TrackHeader, { type TrackData } from './TrackHeader.vue';
+import TrackHeader from './TrackHeader.vue';
 import { useResizeObserver } from '@vueuse/core';
 import Timeline from './Timeline.vue';
 import MiniToolbar from './MiniToolbar.vue';
 import NewTrackButton from './NewTrackButton.vue';
 import draggable from "vuedraggable";
-
+import { useDocument, type TrackSettings } from '../../use/document/useDocument';
 
 const editorSize = reactive({ width: 0, height: 0 });
 
@@ -24,15 +24,15 @@ window.addEventListener("resize", () => {
     timelineSize.width = editorContainer.value!.clientWidth! - 220;
 });
 
-const tracks: Array<TrackData> = reactive([
-    { name: "Track 1", color: "red", muted: false, solo: false, record: false, volume: 0, pan: 3 },
-    { name: "Track 2", color: "orange", muted: false, solo: false, record: false, volume: 0, pan: 50 },
-    { name: "Track 3", color: "yellow", muted: false, solo: false, record: false, volume: 0, pan: 50 },
-    { name: "Track 4", color: "green", muted: false, solo: false, record: false, volume: 0, pan: 50 },
-]);
+const tracks = useDocument().tracks.value;
 
 const defaultTrack = () => {
-    return { name: "Track " + (tracks.length + 1), color: "gray", muted: false, solo: false, record: false, volume: 0, pan: 50 }
+    return {
+        name: "Track " + (tracks.length + 1), settings: {
+            color: "gray", muted: false, solo: false, record: false, volume: 0, pan: 50, soloIsolate: false
+        },
+        clips: []
+    }
 }
 
 const newTrack = () => {

@@ -1,18 +1,7 @@
 /// This is the document model of SyncRecorder projects.
 
-class Resource {
-    guid: string
-    type: 'metadata' | 'audio-clip' | 'unknown'
-    loaded: boolean
-    reference: WeakRef<any> | null
-
-    constructor() {
-        this.guid = crypto.randomUUID();
-        this.type = 'unknown';
-        this.loaded = false;
-        this.reference = null
-    }
-}
+import { useStorage } from "@vueuse/core";
+import { reactive, ref } from "vue";
 
 type Automation = {
     time: number,
@@ -28,26 +17,6 @@ type Clip = {
     fadeOut: number,
 }
 
-function CutClip(clip: Clip, at: number): [Clip, Clip] {
-    return [
-        {
-            level: clip.level,
-            source: clip.source,
-            start: clip.start,
-            end: at,
-            fadeIn: clip.fadeIn,
-            fadeOut: 0,
-        }, {
-            level: clip.level,
-            source: clip.source,
-            start: at,
-            end: clip.end,
-            fadeIn: 0,
-            fadeOut: clip.fadeOut,
-        }
-    ]
-}
-
 export type MetaData = {
     title: string,
     version: string,
@@ -57,29 +26,65 @@ export type MetaData = {
     created: number,
     size: number,
     trackCount: number,
-    sliceCount: number, 
+    sliceCount: number,
 }
 
 export type TrackSettings = {
-    pan: number,
-    volume: number,
+    color: string,
     muted: boolean,
     solo: boolean,
     soloIsolate: boolean,
-    record: boolean
-};
+    record: boolean,
+    volume: number,
+    pan: number,
+}
 
 export type TrackContent = {
     name: string,
-    color: string,
     settings: TrackSettings,
     clips: Clip[]
 };
 
-function setMetaData(meta: MetaData) {
-    const { title, version, author, totalLength, lastModified, created, size, trackCount, sliceCount } = meta;
-    const metaString = JSON.stringify({ title, version, author, totalLength, lastModified, created, size, trackCount, sliceCount });
-    localStorage.setItem("meta", metaString);
+const mockTracks: Array<TrackContent> = reactive([
+    {
+        name: "Track 1",
+        settings: { color: "red", muted: false, solo: false, record: false, volume: 0, pan: 3, soloIsolate: false },
+        clips: []
+    },{
+        name: "Track 2",
+        settings: { color: "green", muted: false, solo: false, record: false, volume: 0, pan: 0, soloIsolate: false },
+        clips: []
+    },{
+        name: "Track 3",
+        settings: { color: "blue", muted: false, solo: false, record: false, volume: 0, pan: -3, soloIsolate: false },
+        clips: []
+    },{
+        name: "Track 4",
+        settings: { color: "yellow", muted: false, solo: false, record: false, volume: 0, pan: 0, soloIsolate: false },
+        clips: []
+    }]
+);
+
+const mockMetaData: MetaData = {
+    title: "Untitled",
+    version: "1.0.0",
+    author: "Anonymous",
+    totalLength: 0,
+    lastModified: Date.now(),
+    created: Date.now(),
+    size: 0,
+    trackCount: 0,
+    sliceCount: 0,
+}
+
+export function useDocument() {
+    const tracks = useStorage("tracks", mockTracks);
+    const metadata = useStorage("metadata", mockMetaData);
+
+    return { tracks, metadata };
+}
+
+function updateMetaData() {
 }
 
 function getMetaData(): MetaData {

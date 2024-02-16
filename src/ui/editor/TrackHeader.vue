@@ -4,23 +4,16 @@ import ToggleButton from '../utils/ToggleButton.vue';
 import LoudnessMeter from './LoudnessMeter.vue';
 import AudioTrackDrowpdownMenuButton from './AudioTrackDrowpdownMenuButton.vue';
 
-export type TrackData = {
-    name: string,
-    color: string,
-    muted: boolean,
-    solo: boolean,
-    record: boolean,
-    volume: number,
-    pan: number,
-}
+import { computed, ref } from 'vue';
+import type { TrackContent, TrackSettings } from '../../use/document/useDocument';
 
 const props = defineProps<{
-    track: TrackData
+    id?: number
+    track: TrackContent
 }>();
 
-import { computed, ref } from 'vue';
+const trackColor = ref(props.track.settings.color);
 
-const trackColor = ref(props.track.color);
 const trackColorClass = computed(() => {
     return `bg-${trackColor.value}-700`;
 });

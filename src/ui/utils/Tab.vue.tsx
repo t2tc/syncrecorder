@@ -1,5 +1,7 @@
 import { createVNode, defineComponent, h, renderSlot, type PropType, type SlotsType, type VNode, ref, computed } from "vue";
 
+// TODO(tl): to remember selected tab for each container.
+
 const defaultTabContent = "This tab is empty.";
 
 export const Tab = defineComponent({

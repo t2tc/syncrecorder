@@ -132,15 +132,15 @@ onMounted(() => {
         resizing = false;
     };
     
-    resizeDownHandler.value.addEventListener('pointerdown', (e) => {
+    resizeDownHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
         resizeDownHandler.value.setPointerCapture(e.pointerId);
         resizing = true;
     });
-    resizeCornerHandler.value.addEventListener('pointerdown', (e) => {
+    resizeCornerHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
         resizeCornerHandler.value.setPointerCapture(e.pointerId);
         resizing = true;
     });
-    resizeRightHandler.value.addEventListener('pointerdown', (e) => {
+    resizeRightHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
         resizeRightHandler.value.setPointerCapture(e.pointerId);
         resizing = true;
     });
