@@ -36,7 +36,7 @@ export default defineComponent({
 
         return () => {
             return <div>
-                <div ref={div} class="text-sm select-text overflow-y-scroll w-[735px] h-[400px] bg-white monospace">
+                <div ref={div} class="text-sm select-text overflow-y-scroll w-full h-[300px] bg-white monospace">
                 </div>
                 <button class=" m-1 p-1 border-slate-500 border rounded-sm text-xs">Refresh</button>
             </div>;

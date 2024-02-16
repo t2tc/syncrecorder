@@ -14,8 +14,7 @@ setInterval(() => {
 </script>
 
 <template>
-    <Dialog :opened="opened" @shall-close="emit('shallClose')" dialog-title="Data Viewer" :min-height="500"
-        :min-width="750">
+    <Dialog :opened="opened" @shall-close="emit('shallClose')" dialog-title="Data Viewer">
         <template #content>
             <Tabs>
                 <Tab label="Data">

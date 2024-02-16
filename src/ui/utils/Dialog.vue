@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
+import { computed, effect, onBeforeMount, onBeforeUpdate, onMounted, onUnmounted, onUpdated, ref, watch } from 'vue';
 import { useDragMovable } from '../../use/useDragMovable';
 
-const dialog = ref();
-const handle = ref();
+const dialog = ref<HTMLDivElement>();
+const handle = ref<HTMLDivElement>();
 
 const props = withDefaults(defineProps<{
     opened: boolean,
@@ -23,7 +23,7 @@ const props = withDefaults(defineProps<{
     dialogTitle: 'Dialog',
     useTitleBar: true,
     manuallyClosable: true,
-    resizable: true,
+    resizable: false,
     maximizable: false,
     position: 'center',
     minHeight: 200,
@@ -32,17 +32,18 @@ const props = withDefaults(defineProps<{
 });
 const emit = defineEmits(['shallClose']);
 
-onMounted(() => {
-    dialog.value.style.minHeight = `${props.minHeight}px`;
-    dialog.value.style.minWidth = `${props.minWidth}px`;
-    dialog.value.style.maxHeight = `${props.maxHeight}px`;
-    dialog.value.style.maxWidth = `${props.maxWidth}px`;
+onUpdated(() => {
+    const dialogElement = dialog.value!;
+    dialogElement.style.minHeight = `${props.minHeight}px`;
+    dialogElement.style.minWidth = `${props.minWidth}px`;
+    dialogElement.style.maxHeight = `${props.maxHeight}px`;
+    dialogElement.style.maxWidth = `${props.maxWidth}px`;
 })
 
 let disposer: () => void = () => { };
 
 onMounted(() => {
-    disposer = useDragMovable(handle.value, dialog.value);
+    disposer = useDragMovable(handle.value!, dialog.value!);
 });
 
 onUnmounted(() => {
@@ -60,20 +61,8 @@ onMounted(() => {
             return props.position;
         }
     });
-    dialog.value.style.left = `${position.value.x}px`;
-    dialog.value.style.top = `${position.value.y}px`;
-});
-
-watch(() => props.opened, (opened) => {
-    if (opened) {
-        if (props.modal) {
-            dialog.value.showModal();
-        } else {
-            dialog.value.show();
-        }
-    } else {
-        dialog.value.close();
-    }
+    dialog.value!.style.left = `${position.value.x}px`;
+    dialog.value!.style.top = `${position.value.y}px`;
 });
 
 const titleBarClassList = computed(() => {
@@ -92,14 +81,13 @@ const bodyClassList = computed(() => {
     return [
         'box-border',
         'flex',
-        "absolute",
         "flex-col",
         "rounded-lg",
         //  props.useTitleBar ? "rounded-t-2xl" : '',
         "shadow-below",
         "border",
         "border-slate-300",
-        "content"
+        "bg-slate-100",
     ];
 });
 
@@ -108,50 +96,53 @@ const resizeDownHandler = ref();
 const resizeCornerHandler = ref();
 
 onMounted(() => {
-    dialog.value.style.height = `${props.minHeight}px`;
-    dialog.value.style.width = `${props.minWidth}px`;
+    if (props.resizable) {
 
-    let resizing = false;
+        const dialogElement = dialog.value!;
+        dialogElement.style.height = `${props.minHeight}px`;
+        dialogElement.style.width = `${props.minWidth}px`;
 
-    const resize = (e: PointerEvent) => {
-        if (resizing) {
-            const dialogRect = dialog.value.getBoundingClientRect();
-            if (e.target == resizeRightHandler.value) {
-                dialog.value.style.width = `${e.clientX - dialogRect.left}px`;
-            } else if (e.target == resizeDownHandler.value) {
-                console.log("down");
-                dialog.value.style.height = `${e.clientY - dialogRect.top}px`;
-            } else if (e.target == resizeCornerHandler.value) {
-                dialog.value.style.width = `${e.clientX - dialogRect.left}px`;
-                dialog.value.style.height = `${e.clientY - dialogRect.top}px`;
+        let resizing = false;
+
+        const resize = (e: PointerEvent) => {
+            if (resizing) {
+                const dialogRect = dialogElement.getBoundingClientRect();
+                if (e.target == resizeRightHandler.value) {
+                    dialogElement.style.width = `${e.clientX - dialogRect.left}px`;
+                } else if (e.target == resizeDownHandler.value) {
+                    dialogElement.style.height = `${e.clientY - dialogRect.top}px`;
+                } else if (e.target == resizeCornerHandler.value) {
+                    dialogElement.style.width = `${e.clientX - dialogRect.left}px`;
+                    dialogElement.style.height = `${e.clientY - dialogRect.top}px`;
+                }
             }
-        }
-    };
-    
-    const stopResize = () => {
-        resizing = false;
-    };
-    
-    resizeDownHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
-        resizeDownHandler.value.setPointerCapture(e.pointerId);
-        resizing = true;
-    });
-    resizeCornerHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
-        resizeCornerHandler.value.setPointerCapture(e.pointerId);
-        resizing = true;
-    });
-    resizeRightHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
-        resizeRightHandler.value.setPointerCapture(e.pointerId);
-        resizing = true;
-    });
+        };
 
-    window.addEventListener('pointermove', resize);
-    window.addEventListener('pointerup', stopResize);
-    
-    onUnmounted(() => {
-        window.removeEventListener('pointermove', resize);
-        window.removeEventListener('pointerup', stopResize);
-    });
+        const stopResize = () => {
+            resizing = false;
+        };
+
+        resizeDownHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
+            resizeDownHandler.value.setPointerCapture(e.pointerId);
+            resizing = true;
+        });
+        resizeCornerHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
+            resizeCornerHandler.value.setPointerCapture(e.pointerId);
+            resizing = true;
+        });
+        resizeRightHandler.value.addEventListener('pointerdown', (e: PointerEvent) => {
+            resizeRightHandler.value.setPointerCapture(e.pointerId);
+            resizing = true;
+        });
+
+        window.addEventListener('pointermove', resize);
+        window.addEventListener('pointerup', stopResize);
+
+        onUnmounted(() => {
+            window.removeEventListener('pointermove', resize);
+            window.removeEventListener('pointerup', stopResize);
+        });
+    }
 });
 
 
@@ -159,7 +150,7 @@ onMounted(() => {
 
 <template>
     <Teleport to="body">
-        <dialog ref="dialog">
+        <div v-if="opened" class="dialog-body" ref="dialog">
             <div class="grid dialog-container">
                 <div :class=bodyClassList>
                     <div :class=titleBarClassList ref="handle">
@@ -178,29 +169,19 @@ onMounted(() => {
                     </div>
                     <div class="p-2">
                         <slot name="content" />
-                        <div class="resize-indicator">
-                            <svg viewBox="0 0 5 5">
-                                <line x1="0" y1="5" x2="5" y2="0" stroke="black" stroke-width="0.5" />
-                            </svg>
-                        </div>
                     </div>
                 </div>
                 <div v-if="$props.resizable" class="resize-right-handler" ref="resizeRightHandler"></div>
                 <div v-if="$props.resizable" class="resize-down-handler" ref="resizeDownHandler"></div>
                 <div v-if="$props.resizable" class="resize-corner-handler" ref="resizeCornerHandler"></div>
             </div>
-        </dialog>
+        </div>
     </Teleport>
 </template>
 
 <style scoped>
-dialog {
-    margin: 0;
-    background-color: transparent;
-}
-
-dialog::backdrop {
-    background-color: salmon;
+.dialog-body {
+    position: absolute;
 }
 
 .dialog-container {
@@ -240,14 +221,5 @@ dialog::backdrop {
     overflow: hidden;
     position: relative;
     background-color: aliceblue;
-}
-
-.resize-indicator {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 5px;
-    height: 5px;
-    transform: translate(-25%, -25%);
 }
 </style>

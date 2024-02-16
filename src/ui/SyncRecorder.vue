@@ -103,9 +103,12 @@ onMounted(() => {
   })
 })
 
+/*
 onMounted(() => {
-    dataViewerOpened.value = true;
+  aboutOpened.value = true;
+  dataViewerOpened.value = true;
 })
+*/
 
 
 </script>
@@ -115,9 +118,10 @@ onMounted(() => {
     <div class="sticky w-full top-0 left-0">
       <TitlebarStyleWindows :menus="menuItems"></TitlebarStyleWindows>
       <Toolbar></Toolbar>
+    </div>
+    <Editor></Editor>
+    <StatusBar></StatusBar>
+    <About :opened="aboutOpened" :onShallClose="() => { aboutOpened = false }"></About>
+    <DataViewer :opened="dataViewerOpened" :onShallClose="() => { dataViewerOpened = false }"></DataViewer>
   </div>
-  <Editor></Editor>
-  <StatusBar></StatusBar>
-  <About :opened="aboutOpened" :onShallClose="() => {aboutOpened = false}"></About>
-  <DataViewer :opened="dataViewerOpened" :onShallClose="() => {dataViewerOpened = false}"></DataViewer>
-</div></template>
+</template>
