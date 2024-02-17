@@ -15,7 +15,7 @@ setInterval(() => {
 
 <template>
     <div v-if="opened">
-        <Dialog :opened="opened" @shall-close="emit('shallClose')" dialog-title="Data Viewer">
+        <Dialog :opened="opened" @shall-close="emit('shallClose')" dialog-title="Data Viewer" :resizable="true">
             <template #content>
                 <Tabs>
                     <Tab label="Data">

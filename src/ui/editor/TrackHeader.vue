@@ -13,6 +13,11 @@ const props = defineProps<{
 }>();
 
 const trackColor = ref(props.track.settings.color);
+const muted = ref(props.track.settings.muted);
+const solo = ref(props.track.settings.solo);
+const record = ref(props.track.settings.record);
+const volume = ref(props.track.settings.volume);
+const pan = ref(props.track.settings.pan);
 
 const trackColorClass = computed(() => {
     return `bg-${trackColor.value}-700`;
@@ -21,15 +26,6 @@ const buttonColorClass = computed(() => {
     return `bg-${trackColor.value}-800`;
 });
 
-const emit = defineEmits({
-    'colorSelected': (color: string) => true,
-    'titleChanged': (title: string) => true,
-    'mute': (muted: boolean) => true,
-    'solo': (soloed: boolean) => true,
-    'record': (recorded: boolean) => true,
-    'pan': (pan: number) => true,
-    'volume': (volume: number) => true,
-})
 
 </script>
 
@@ -52,11 +48,11 @@ const emit = defineEmits({
                     </div>
                     <div class="flex flex-row m-3 gap-3">
                         <div class="flex flex-col items-center">
-                            <Knob :size=30 :is-pan-knob=true :default-value=50 @value-changed=""></Knob>
+                            <Knob :size=30 :is-pan-knob=true v-model="pan"></Knob>
                             <span class="text-xs select-none text-neutral-400">Pan</span>
                         </div>
                         <div class="flex flex-col items-center">
-                            <Knob :size=30 :default-value=80 @value-changed=""></Knob>
+                            <Knob :size=30 v-model="volume"></Knob>
                             <span class="text-xs select-none text-neutral-400">Volume</span>
                         </div>
                     </div>

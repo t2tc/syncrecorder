@@ -21,7 +21,7 @@ type KnobProps = {
     /** The maximum value of knob. */
     max?: number,
     /** The default value of knob. */
-    defaultValue?: number
+    value?: number
 }
 
 const startAngle = 30;
@@ -35,12 +35,9 @@ const props = withDefaults(defineProps<KnobProps>(), {
     stickyArea: 5,
     min: 0,
     max: 100,
-    defaultValue: 50
 });
 
-const emits = defineEmits<{
-    (e: 'valueChanged', value: number): void,
-}>();
+const knobValue = defineModel<number>();
 
 const id = useSvgId("knobSlot");
 
@@ -49,13 +46,11 @@ const self = ref<HTMLDivElement | null>(null);
 let pointerDown = false;
 let direction = 1;
 
-let knobValue = ref(props.defaultValue);
-watch(knobValue, () => {
-    if (!props.disabled) emits('valueChanged', knobValue.value);
-});
-
-let knobValuePercentage = computed({
-    get() { return knobValue.value / (props.max! - props.min!) * 100; },
+const knobValuePercentage = computed({
+    get() {
+        if (knobValue.value) { return knobValue.value / (props.max! - props.min!) * 100; }
+        else { return 0; }
+    },
     set(v) {
         if (v < 0 || v > 100) return;
         knobValue.value = v / 100 * (props.max! - props.min!);

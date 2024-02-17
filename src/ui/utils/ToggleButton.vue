@@ -17,12 +17,12 @@ const props = withDefaults(defineProps<ToggleButtonProps>(), {
 });
 
 const emits = defineEmits<{
-    (e: 'valueChanged', value: boolean): void,
+    (e: 'input', value: boolean): void,
 }>();
 
 const selected = ref(props.defaultValue);
 watch(selected, () => {
-    emits('valueChanged', selected.value);
+    emits('input', selected.value);
 });
 
 const backgroundColor = computed(() => selected.value ? props.selectedColor : props.color);
