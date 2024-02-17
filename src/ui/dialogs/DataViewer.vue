@@ -14,20 +14,22 @@ setInterval(() => {
 </script>
 
 <template>
-    <Dialog :opened="opened" @shall-close="emit('shallClose')" dialog-title="Data Viewer">
-        <template #content>
-            <Tabs>
-                <Tab label="Data">
-                    <DataViewerDataContent />
-                </Tab>
-                <Tab label="Misc Storage">
-                    <p> This shall be presented in the second tab.</p>
-                </Tab>
-                <Tab label="OPFS">
-                    <p> This shall be presented in the third tab.</p>
-                </Tab>
-            </Tabs>
-        </template>
-    </Dialog>
+    <div v-if="opened">
+        <Dialog :opened="opened" @shall-close="emit('shallClose')" dialog-title="Data Viewer">
+            <template #content>
+                <Tabs>
+                    <Tab label="Data">
+                        <DataViewerDataContent />
+                    </Tab>
+                    <Tab label="Misc Storage">
+                        <p> This shall be presented in the second tab.</p>
+                    </Tab>
+                    <Tab label="OPFS">
+                        <p> This shall be presented in the third tab.</p>
+                    </Tab>
+                </Tabs>
+            </template>
+        </Dialog>
+    </div>
 </template>
 

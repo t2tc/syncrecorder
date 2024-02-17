@@ -26,18 +26,17 @@ const props = withDefaults(defineProps<{
     resizable: false,
     maximizable: false,
     position: 'center',
-    minHeight: 200,
-    minWidth: 400,
     modal: false,
 });
+
 const emit = defineEmits(['shallClose']);
 
-onUpdated(() => {
+onMounted(() => {
     const dialogElement = dialog.value!;
-    dialogElement.style.minHeight = `${props.minHeight}px`;
-    dialogElement.style.minWidth = `${props.minWidth}px`;
-    dialogElement.style.maxHeight = `${props.maxHeight}px`;
-    dialogElement.style.maxWidth = `${props.maxWidth}px`;
+    if(props.minHeight) dialogElement.style.minHeight = `${props.minHeight}px`;
+    if(props.minWidth) dialogElement.style.minWidth = `${props.minWidth}px`;
+    if(props.maxHeight) dialogElement.style.maxHeight = `${props.maxHeight}px`;
+    if(props.maxWidth) dialogElement.style.maxWidth = `${props.maxWidth}px`;
 })
 
 let disposer: () => void = () => { };
@@ -54,8 +53,8 @@ onMounted(() => {
     const position = computed(() => {
         if (props.position == 'center') {
             return {
-                x: window.innerWidth / 2 - props.minWidth / 2,
-                y: window.innerHeight / 2 - props.minHeight / 2,
+                x: window.innerWidth / 2 - dialog.value!.clientWidth / 2,
+                y: window.innerHeight / 2 - dialog.value!.clientHeight / 2,
             };
         } else {
             return props.position;
@@ -150,7 +149,7 @@ onMounted(() => {
 
 <template>
     <Teleport to="body">
-        <div v-if="opened" class="dialog-body" ref="dialog">
+        <div class="dialog-body" ref="dialog">
             <div class="grid dialog-container">
                 <div :class=bodyClassList>
                     <div :class=titleBarClassList ref="handle">

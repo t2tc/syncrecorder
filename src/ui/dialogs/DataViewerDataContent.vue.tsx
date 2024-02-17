@@ -20,7 +20,7 @@ export default defineComponent({
                     put(`: ${value}`);
                     println();
                 });
-                put('Tracks:');
+                println('Tracks:');
                 tracks.forEach((content, index) => {
                     red("track number #" + index + ' ');
                     green(`name: ${content.name}`);

@@ -21,6 +21,16 @@ const buttonColorClass = computed(() => {
     return `bg-${trackColor.value}-800`;
 });
 
+const emit = defineEmits({
+    'colorSelected': (color: string) => true,
+    'titleChanged': (title: string) => true,
+    'mute': (muted: boolean) => true,
+    'solo': (soloed: boolean) => true,
+    'record': (recorded: boolean) => true,
+    'pan': (pan: number) => true,
+    'volume': (volume: number) => true,
+})
+
 </script>
 
 <template>
@@ -31,7 +41,7 @@ const buttonColorClass = computed(() => {
             </div>
             <div class="w-full">
                 <div class="handle flex h-6 items-center place-content-between" :class="trackColorClass">
-                    <span class="pl-3 text-sm text-neutral-300">{{ track.name }}</span>
+                    <input class="pl-3 text-sm text-neutral-300 bg-transparent" disabled :value="track.name">
                     <AudioTrackDrowpdownMenuButton :color="trackColor" @color-selected="(color) => trackColor = color"></AudioTrackDrowpdownMenuButton>
                 </div>
                 <div class="flex flex-row-reverse place-content-between">
